@@ -9,4 +9,15 @@ add_executable(server main.cpp
         tasks/test_task.cpp
         tasks/test_task.h
         task_manager.cpp
-        task_manager.h)
+        task_manager.h
+        server.cpp
+        server.h
+        exceptions/server_exception.cpp
+        exceptions/server_exception.h
+        socket_manager.cpp
+        socket_manager.h
+        guid.cpp
+        guid.h
+        exceptions/guid_creation_exception.cpp
+        exceptions/guid_creation_exception.h
+)
