@@ -20,4 +20,13 @@ add_executable(server main.cpp
         guid.h
         exceptions/guid_creation_exception.cpp
         exceptions/guid_creation_exception.h
+        network_init.cpp
+        network_init.h
+        exceptions/winsock_exception.cpp
+        exceptions/winsock_exception.h
+        buffer.h
+        exceptions/socket_manager_exception.cpp
+        exceptions/socket_manager_exception.h
 )
+
+target_link_libraries(server PRIVATE ws2_32.lib)

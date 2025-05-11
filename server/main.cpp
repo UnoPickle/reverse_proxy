@@ -1,13 +1,15 @@
 #include <iostream>
 
+#include "network_init.h"
 #include "task_manager.h"
 
-#pragma comment(lib, "ws2_32.lib")
 
 int main()
 {
     try
     {
+        network_init network;
+
 
     }catch (const std::exception& e)
     {
