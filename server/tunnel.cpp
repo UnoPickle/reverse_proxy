@@ -36,6 +36,21 @@ buffer tunnel::recv_from(const guid& client, const size_t max_len) const
     return m_socket_manager.recv(client, max_len);
 }
 
+guid tunnel::host() const
+{
+    return m_host;
+}
+
+guid tunnel::listener() const
+{
+    return m_listener;
+}
+
+const std::vector<guid>& tunnel::clients() const
+{
+    return m_clients;
+}
+
 bool tunnel::client_in_tunnel(const guid& client) const
 {
     return std::ranges::find(m_clients, client) == m_clients.end();

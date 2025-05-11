@@ -37,6 +37,10 @@ add_executable(server main.cpp
         tunnel.h
         exceptions/tunnel_exception.cpp
         exceptions/tunnel_exception.h
+        tunnel_manager.cpp
+        tunnel_manager.h
+        exceptions/tunnel_manager_exception.cpp
+        exceptions/tunnel_manager_exception.h
 )
 
 target_link_libraries(server PRIVATE ws2_32.lib)

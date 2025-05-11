@@ -10,9 +10,9 @@
 
 socket_manager::~socket_manager()
 {
-    for (const SOCKET socket_entry : std::ranges::views::values(m_sockets))
+    for (const guid socket_guid : std::ranges::views::keys(m_sockets))
     {
-        ::closesocket(socket_entry);
+        close_socket(socket_guid);
     }
 }
 
@@ -63,6 +63,16 @@ guid socket_manager::add_socket(const SOCKET socket)
 
     return new_guid;
 }
+
+void socket_manager::close_socket(const guid& guid)
+{
+    SOCKET socket = get_socket(guid);
+
+    ::closesocket(socket);
+
+    m_sockets.erase(guid);
+}
+
 
 SOCKET socket_manager::get_socket(const guid& socket_guid)
 {

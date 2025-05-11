@@ -15,7 +15,7 @@ public:
     guid accept(const guid& listener_guid);
 
     guid add_socket(SOCKET socket);
-
+    void close_socket(const guid& guid);
 private:
     SOCKET get_socket(const guid& socket_guid);
 
