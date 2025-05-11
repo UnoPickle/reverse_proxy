@@ -33,6 +33,10 @@ add_executable(server main.cpp
         socket_utils.h
         config.cpp
         config.h
+        tunnel.cpp
+        tunnel.h
+        exceptions/tunnel_exception.cpp
+        exceptions/tunnel_exception.h
 )
 
 target_link_libraries(server PRIVATE ws2_32.lib)
