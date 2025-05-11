@@ -1,5 +1,6 @@
 #include "socket_manager.h"
 
+#include <memory>
 #include <ranges>
 
 #include "exceptions/socket_manager_exception.h"
@@ -17,29 +18,28 @@ socket_manager::~socket_manager()
 
 void socket_manager::send(const guid& socket_guid, const buffer& send_buffer)
 {
-    SOCKET socket = get_socket(socket_guid);
+    const SOCKET socket = get_socket(socket_guid);
 
     ::send(socket, reinterpret_cast<const char*>(send_buffer.data()), send_buffer.size(), 0);
 }
 
 buffer socket_manager::recv(const guid& socket_guid, const size_t max_read_size)
 {
-    SOCKET socket = get_socket(socket_guid);
+    const SOCKET socket = get_socket(socket_guid);
 
-    buffer recv_buffer(max_read_size);
-    ::recv(socket, (char*)recv_buffer.data(), max_read_size, 0);
+    const std::unique_ptr<uint8_t[]> temp_buffer = std::make_unique<uint8_t[]>(max_read_size);
 
-    return recv_buffer;
+    ::recv(socket, (char*)temp_buffer.get(), max_read_size, 0);
+
+    return std::vector(temp_buffer.get(), temp_buffer.get() + max_read_size);
 }
 
 guid socket_manager::accept(const guid& listener_guid)
 {
-    SOCKET socket = get_socket(listener_guid);
-
-    SOCKET new_socket = ::accept(socket, NULL, NULL);
+    const SOCKET socket = get_socket(listener_guid);
 
 
-    if (new_socket != INVALID_SOCKET)
+    if (const SOCKET new_socket = ::accept(socket, NULL, NULL); new_socket != INVALID_SOCKET)
     {
         return add_socket(new_socket);
     }
