@@ -1,8 +1,19 @@
 #include "socket_manager.h"
 
+#include <ranges>
+
 #include "exceptions/socket_manager_exception.h"
 #include "exceptions/winsock_exception.h"
 #include "exceptions/winsock_nonblock_exception.h"
+
+
+socket_manager::~socket_manager()
+{
+    for (const SOCKET socket_entry : std::ranges::views::values(m_sockets))
+    {
+        ::closesocket(socket_entry);
+    }
+}
 
 void socket_manager::send(const guid& socket_guid, const buffer& send_buffer)
 {
@@ -26,6 +37,7 @@ guid socket_manager::accept(const guid& listener_guid)
     SOCKET socket = get_socket(listener_guid);
 
     SOCKET new_socket = ::accept(socket, NULL, NULL);
+
 
     if (new_socket != INVALID_SOCKET)
     {

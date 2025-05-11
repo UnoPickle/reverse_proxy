@@ -4,6 +4,10 @@
 
 #include "exceptions/guid_creation_exception.h"
 
+guid::guid()
+{
+}
+
 guid::guid(const GUID& guid)
 {
     memcpy(&m_guid, &guid, sizeof(GUID));
@@ -24,6 +28,11 @@ guid& guid::operator=(const guid& other)
 bool guid::operator==(const guid& other) const
 {
     return std::memcmp(&m_guid, &other.m_guid, sizeof(GUID)) == 0;
+}
+
+bool guid::operator<(const guid& other) const
+{
+    return std::memcmp(&m_guid, &other.m_guid, sizeof(GUID)) < 0;
 }
 
 

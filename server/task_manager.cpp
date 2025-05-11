@@ -61,7 +61,6 @@ void task_manager::worker_routine(uint64_t worker_id)
             m_tasks.pop();
         }
 
-        std::cout << "worker_id " << worker_id << ": ";
         m_current_task->complete();
 
         if (m_current_task->repeat())

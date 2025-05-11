@@ -29,6 +29,10 @@ add_executable(server main.cpp
         exceptions/socket_manager_exception.h
         exceptions/winsock_nonblock_exception.cpp
         exceptions/winsock_nonblock_exception.h
+        socket_utils.cpp
+        socket_utils.h
+        config.cpp
+        config.h
 )
 
 target_link_libraries(server PRIVATE ws2_32.lib)

@@ -40,3 +40,4 @@ void task_manager::enqueue(Args&&... args)
 {
     task_manager::enqueue(std::make_shared<T>(std::forward<Args>(args)...));
 }
+
