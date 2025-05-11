@@ -41,6 +41,15 @@ add_executable(server main.cpp
         tunnel_manager.h
         exceptions/tunnel_manager_exception.cpp
         exceptions/tunnel_manager_exception.h
+        tasks/isocket_task.cpp
+        tasks/isocket_task.h
+        packets/packet_type.h
+        packets/ipacket.cpp
+        packets/ipacket.h
+        packets/client_connection_packet.cpp
+        packets/client_connection_packet.h
+        tasks/client_con_task.cpp
+        tasks/client_con_task.h
 )
 
 target_link_libraries(server PRIVATE ws2_32.lib)

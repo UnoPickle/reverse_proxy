@@ -1,8 +1,8 @@
 #pragma once
 #include <map>
 
-#include "guid.h"
 #include "tunnel.h"
+#include "guid.h"
 
 using tunnel_guid = guid;
 
@@ -15,6 +15,8 @@ public:
     tunnel& get_tunnel(const tunnel_guid& guid);
 
     void close_tunnel(const tunnel_guid& tunnel_guid);
+
+    bool tunnel_exists(const tunnel_guid& tunnel_guid) const;
 
 private:
     socket_manager& m_socket_manager;

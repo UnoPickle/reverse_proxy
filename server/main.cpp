@@ -11,6 +11,8 @@ int main()
     {
         network_init network;
         server server;
+
+        system("pause");
     }
     catch (const std::exception& e)
     {

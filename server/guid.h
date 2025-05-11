@@ -10,6 +10,8 @@ public:
     guid& operator=(const guid& other);
     bool operator==(const guid& other) const;
     bool operator<(const guid& other) const;
+    const GUID* guid_ptr() const;
+
 
     static guid generate_guid();
 private:

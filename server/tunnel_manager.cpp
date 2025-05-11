@@ -48,3 +48,10 @@ void tunnel_manager::close_tunnel(const tunnel_guid& tunnel_guid)
 
     m_tunnels.erase(it);
 }
+
+bool tunnel_manager::tunnel_exists(const tunnel_guid& tunnel_guid) const
+{
+    const auto it = m_tunnels.find(tunnel_guid);
+
+    return it != m_tunnels.end();
+}

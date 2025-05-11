@@ -16,8 +16,9 @@ public:
 
     guid add_socket(SOCKET socket);
     void close_socket(const guid& guid);
-private:
+
     SOCKET get_socket(const guid& socket_guid);
 
+private:
     std::map<guid, SOCKET> m_sockets;
 };

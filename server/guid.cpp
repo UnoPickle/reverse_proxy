@@ -35,6 +35,11 @@ bool guid::operator<(const guid& other) const
     return std::memcmp(&m_guid, &other.m_guid, sizeof(GUID)) < 0;
 }
 
+const GUID* guid::guid_ptr() const
+{
+    return &m_guid;
+}
+
 
 guid guid::generate_guid()
 {
