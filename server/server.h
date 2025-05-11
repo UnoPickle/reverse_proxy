@@ -1,6 +1,7 @@
 #pragma once
 #include "socket_manager.h"
-#include "task_manager.h"
+#include "tunnel_manager.h"
+
 
 class server
 {
@@ -9,6 +10,10 @@ public:
     ~server();
 
 private:
-    task_manager m_task_manager;
-    socket_manager g_socket_manager;
+    static SOCKET create_config_listener();
+
+    guid m_config_listener;
+
+    socket_manager m_socket_manager;
+    tunnel_manager m_tunnel_manager;
 };

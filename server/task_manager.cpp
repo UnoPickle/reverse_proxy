@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+#include "config.h"
+
+task_manager g_task_manager(config::thread_count);
+
 task_manager::task_manager(const size_t thread_count)
 {
     for (size_t i = 0; i < thread_count; i++)
