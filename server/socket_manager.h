@@ -8,6 +8,7 @@ class socket_manager
 {
 public:
     void send(const guid& socket_guid, const buffer& send_buffer);
+    buffer recv(const guid& socket_guid, size_t max_read_size);
 
 private:
     SOCKET get_socket(const guid& socket_guid);
