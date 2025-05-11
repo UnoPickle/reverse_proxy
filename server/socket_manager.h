@@ -1,7 +1,13 @@
 #pragma once
+#include <unordered_map>
+
+#include "guid.h"
 
 class socket_manager
 {
 public:
-    send();
+    void send();
+
+private:
+    std::unordered_map<guid, SOCKET>
 };

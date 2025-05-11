@@ -1,7 +1,8 @@
 #include <iostream>
 
 #include "task_manager.h"
-#include "tasks/test_task.h"
+
+#pragma comment(lib, "ws2_32.lib")
 
 int main()
 {
