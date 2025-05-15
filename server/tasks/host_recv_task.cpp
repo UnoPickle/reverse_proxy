@@ -29,7 +29,7 @@ void host_recv_task::handle_packet(const reverse_proxy_packet_type packet_type)
     switch (packet_type)
     {
     case reverse_proxy_packet_type::TUNNEL_INFO:
-
+        handle_tunnel_info();
         break;
     case reverse_proxy_packet_type::CLIENT_CONNECTION:
         break;

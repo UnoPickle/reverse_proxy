@@ -29,9 +29,21 @@ buffer socket_manager::recv(const guid& socket_guid, const size_t max_read_size)
 
     const std::unique_ptr<uint8_t[]> temp_buffer = std::make_unique<uint8_t[]>(max_read_size);
 
-    ::recv(socket, (char*)temp_buffer.get(), max_read_size, 0);
+    if (::recv(socket, (char*)temp_buffer.get(), max_read_size, 0) != SOCKET_ERROR)
+    {
+        return std::vector(temp_buffer.get(), temp_buffer.get() + max_read_size);
+    }
 
-    return std::vector(temp_buffer.get(), temp_buffer.get() + max_read_size);
+    int last_error = WSAGetLastError();
+
+    if (last_error == WSAEWOULDBLOCK)
+    {
+        throw winsock_nonblock_exception("no clients queued");
+    }
+    else
+    {
+        throw winsock_exception("couldn't accept socket");
+    }
 }
 
 guid socket_manager::accept(const guid& listener_guid)
