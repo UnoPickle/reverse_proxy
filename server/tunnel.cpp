@@ -11,9 +11,13 @@ tunnel::tunnel(socket_manager& socket_manager, const guid& host, const guid& lis
 {
 }
 
-guid tunnel::accept_client() const
+guid tunnel::accept_client()
 {
-    return m_socket_manager.accept(m_listener);
+    guid guid = m_socket_manager.accept(m_listener);
+
+    m_clients.push_back(guid);
+
+    return guid;
 }
 
 void tunnel::send_to(const guid& client, const buffer& buffer) const

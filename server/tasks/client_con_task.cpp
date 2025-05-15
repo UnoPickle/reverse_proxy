@@ -13,7 +13,7 @@ void client_con_task::complete()
 {
     try
     {
-        guid new_client_guid = m_socket_manager.accept(m_tunnel.listener());
+        guid new_client_guid = m_tunnel.accept_client();
     }catch (const winsock_nonblock_exception& e)
     {
 
