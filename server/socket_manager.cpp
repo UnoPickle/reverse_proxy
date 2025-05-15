@@ -49,17 +49,17 @@ guid socket_manager::accept(const guid& listener_guid)
     if (last_error == WSAEWOULDBLOCK)
     {
         throw winsock_nonblock_exception("no clients queued");
-    }else
+    }
+    else
     {
         throw winsock_exception("couldn't accept socket");
     }
-
 }
 
 guid socket_manager::add_socket(const SOCKET socket)
 {
     guid new_guid = guid::generate_guid();
-     m_sockets.emplace(new_guid, socket);
+    m_sockets.emplace(new_guid, socket);
 
     return new_guid;
 }
@@ -84,4 +84,18 @@ SOCKET socket_manager::get_socket(const guid& socket_guid)
     }
 
     return sock_it->second;
+}
+
+bool socket_manager::socket_exists(const guid& socket_guid)
+{
+    try
+    {
+        SOCKET soc = get_socket(socket_guid);
+
+        return true;
+    }
+    catch (socket_manager_exception& e)
+    {
+        return false;
+    }
 }

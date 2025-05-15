@@ -19,6 +19,8 @@ public:
 
     SOCKET get_socket(const guid& socket_guid);
 
+    bool socket_exists(const guid& socket_guid);
+
 private:
     std::map<guid, SOCKET> m_sockets;
 };
