@@ -2,6 +2,7 @@
 
 #include "../socket_utils.h"
 #include "../tunnel.h"
+#include "../exceptions/winsock_nonblock_exception.h"
 #include "../packets/ipacket.h"
 #include "../packets/tunnel_info_packet.h"
 
@@ -12,11 +13,17 @@ host_recv_task::host_recv_task(socket_manager& socket_manager, tunnel_manager& t
 
 void host_recv_task::complete()
 {
-    buffer buf = m_socket_manager.recv(m_tunnel.host(), sizeof(reverse_proxy_packet_header));
+    try
+    {
+        buffer buf = m_socket_manager.recv(m_tunnel.host(), sizeof(reverse_proxy_packet_header));
+        const reverse_proxy_packet_type type = static_cast<reverse_proxy_packet_type>(buf[0]);
 
-    reverse_proxy_packet_type type = static_cast<reverse_proxy_packet_type>(buf[0]);
+        handle_packet(type);
+    }catch (const winsock_nonblock_exception& e)
+    {
+        return;
+    }
 
-    handle_packet(type);
 }
 
 bool host_recv_task::repeat()

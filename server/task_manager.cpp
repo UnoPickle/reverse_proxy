@@ -1,5 +1,6 @@
 #include "task_manager.h"
 
+#include <format>
 #include <iostream>
 
 #include "config.h"
@@ -34,7 +35,7 @@ void task_manager::force_stop()
 
     for (auto& thread : m_threads)
     {
-        thread.join();
+        thread.detach();
     }
 }
 
@@ -65,7 +66,14 @@ void task_manager::worker_routine(uint64_t worker_id)
             m_tasks.pop();
         }
 
-        m_current_task->complete();
+        try
+        {
+            m_current_task->complete();
+
+        }catch (const std::exception& e)
+        {
+            std::cout << std::format("[ worker_id_{} ]: ", std::to_string(worker_id)) << e.what() << std::endl;
+        }
 
         if (m_current_task->repeat())
         {

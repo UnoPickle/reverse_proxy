@@ -10,9 +10,9 @@
 
 socket_manager::~socket_manager()
 {
-    for (const guid socket_guid : std::ranges::views::keys(m_sockets))
+    for (auto soc : m_sockets | std::views::values)
     {
-        close_socket(socket_guid);
+        ::closesocket(soc);
     }
 }
 

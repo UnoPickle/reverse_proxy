@@ -1,10 +1,10 @@
 #include "ipacket.h"
 
-ipacket::ipacket(const packet_type type) : m_type(type)
+ipacket::ipacket(const reverse_proxy_packet_type type) : m_type(type)
 {
 }
 
-packet_type ipacket::type() const
+reverse_proxy_packet_type ipacket::type() const
 {
     return m_type;
 }

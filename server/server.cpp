@@ -1,5 +1,7 @@
 #include "server.h"
 
+#include <iostream>
+
 #include "config.h"
 #include "socket_utils.h"
 #include "task_manager.h"
@@ -40,28 +42,35 @@ void server::stop_config_listener_thread()
 
     m_config_listener_running = false;
 
-    pthread_kill(m_config_listener_thread->native_handle(), SIGINT);
+    m_config_listener_thread->detach();
 }
 
 void server::config_listener_thread_func()
 {
     while (m_config_listener_running)
     {
-        guid new_server_guid = m_socket_manager.accept(m_config_listener);
+        try
+        {
+            guid new_server_guid = m_socket_manager.accept(m_config_listener);
 
-        const SOCKET new_server_socket = m_socket_manager.get_socket(new_server_guid);
-        socket_utils::apply_socket_flags(new_server_socket);
+            const SOCKET new_server_socket = m_socket_manager.get_socket(new_server_guid);
+            socket_utils::apply_socket_flags(new_server_socket);
 
-        const SOCKET new_tunnel_listener = create_tunnel_listener();
-        socket_utils::apply_socket_flags(new_tunnel_listener);
+            const SOCKET new_tunnel_listener = create_tunnel_listener();
+            socket_utils::apply_socket_flags(new_tunnel_listener);
 
 
-        guid new_tunnel_listener_guid = m_socket_manager.add_socket(new_tunnel_listener);
+            guid new_tunnel_listener_guid = m_socket_manager.add_socket(new_tunnel_listener);
 
-        tunnel_guid new_tunnel_guid = m_tunnel_manager.create_tunnel(new_server_guid, new_tunnel_listener_guid);
+            tunnel_guid new_tunnel_guid = m_tunnel_manager.create_tunnel(new_server_guid, new_tunnel_listener_guid);
 
-        g_task_manager.enqueue<host_recv_task>(m_socket_manager, new_server_guid);
-        g_task_manager.enqueue<client_con_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
+            g_task_manager.enqueue<host_recv_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
+            g_task_manager.enqueue<client_con_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << "[ config_listener_thread ]: " << e.what() << std::endl;
+        }
     }
 }
 

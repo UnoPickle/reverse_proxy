@@ -32,6 +32,8 @@ int main()
         server_address.sin_addr.s_addr = inet_addr("127.0.0.1");
         server_address.sin_port = htons(1212);
 
+        connect(test_socket, reinterpret_cast<sockaddr  *>(&server_address), sizeof(server_address));
+
         reverse_proxy_packet_header tunnel_info_request = {reverse_proxy_packet_type::TUNNEL_INFO};
         send(test_socket, reinterpret_cast<char*>(&tunnel_info_request), sizeof(tunnel_info_request), 0);
 
