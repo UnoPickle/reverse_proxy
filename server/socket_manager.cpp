@@ -1,6 +1,7 @@
 #include "socket_manager.h"
 
 #include <memory>
+#include <mutex>
 #include <ranges>
 
 #include "exceptions/socket_manager_exception.h"
@@ -71,7 +72,11 @@ guid socket_manager::accept(const guid& listener_guid)
 guid socket_manager::add_socket(const SOCKET socket)
 {
     guid new_guid = guid::generate_guid();
-    m_sockets.emplace(new_guid, socket);
+
+    {
+        std::unique_lock lock(m_sockets_mutex);
+        m_sockets.emplace(new_guid, socket);
+    }
 
     return new_guid;
 }
@@ -82,17 +87,20 @@ void socket_manager::close_socket(const guid& guid)
 
     ::closesocket(socket);
 
-    m_sockets.erase(guid);
+    {
+        std::unique_lock lock(m_sockets_mutex);
+        m_sockets.erase(guid);
+    }
 }
 
 
 SOCKET socket_manager::get_socket(const guid& socket_guid)
 {
+    std::unique_lock lock(m_sockets_mutex);
     const auto sock_it = m_sockets.find(socket_guid);
-
     if (sock_it == m_sockets.end())
     {
-        throw socket_manager_exception("not socket found with given guid");
+        throw socket_manager_exception("no socket found with given guid");
     }
 
     return sock_it->second;
@@ -106,7 +114,7 @@ bool socket_manager::socket_exists(const guid& socket_guid)
 
         return true;
     }
-    catch (socket_manager_exception& e)
+    catch (const socket_manager_exception& e)
     {
         return false;
     }

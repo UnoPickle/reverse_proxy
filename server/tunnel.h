@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <vector>
 
 #include "socket_manager.h"
@@ -18,11 +19,12 @@ public:
     [[nodiscard]] const std::vector<guid>& clients() const;
 
 private:
-    bool client_in_tunnel(const guid& client) const;
+    [[nodiscard]] bool client_in_tunnel(const guid& client) const;
 
     guid m_host;
     guid m_listener;
 
+    std::shared_ptr<std::mutex> m_clients_mutex;
     std::vector<guid> m_clients;
     socket_manager& m_socket_manager;
 };

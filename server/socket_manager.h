@@ -1,6 +1,8 @@
 #pragma once
 #include <map>
 #include <winsock2.h>
+#include <bits/std_mutex.h>
+
 #include "buffer.h"
 #include "guid.h"
 
@@ -22,5 +24,6 @@ public:
     bool socket_exists(const guid& socket_guid);
 
 private:
+    std::mutex m_sockets_mutex;
     std::map<guid, SOCKET> m_sockets;
 };

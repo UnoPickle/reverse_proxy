@@ -1,6 +1,7 @@
 #include "tunnel.h"
 
 #include <algorithm>
+#include <mutex>
 
 #include "exceptions/tunnel_exception.h"
 
@@ -15,6 +16,7 @@ guid tunnel::accept_client()
 {
     guid guid = m_socket_manager.accept(m_listener);
 
+    std::unique_lock lock(*m_clients_mutex);
     m_clients.push_back(guid);
 
     return guid;
@@ -57,5 +59,6 @@ const std::vector<guid>& tunnel::clients() const
 
 bool tunnel::client_in_tunnel(const guid& client) const
 {
+    std::unique_lock lock(*m_clients_mutex);
     return std::ranges::find(m_clients, client) == m_clients.end();
 }

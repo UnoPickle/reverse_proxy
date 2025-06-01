@@ -47,8 +47,8 @@ add_executable(server main.cpp
         packets/ipacket.h
         packets/client_connection_packet.cpp
         packets/client_connection_packet.h
-        tasks/client_con_task.cpp
-        tasks/client_con_task.h
+        tasks/host_client_con_task.cpp
+        tasks/host_client_con_task.h
         tasks/host_recv_task.cpp
         tasks/host_recv_task.h
         packets/tunnel_info_packet.cpp

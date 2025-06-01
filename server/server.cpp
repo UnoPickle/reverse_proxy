@@ -6,7 +6,7 @@
 #include "socket_utils.h"
 #include "task_manager.h"
 #include "exceptions/winsock_exception.h"
-#include "tasks/client_con_task.h"
+#include "tasks/host_client_con_task.h"
 #include "tasks/host_recv_task.h"
 
 server::server() : m_tunnel_manager(m_socket_manager)
@@ -65,7 +65,7 @@ void server::config_listener_thread_func()
             tunnel_guid new_tunnel_guid = m_tunnel_manager.create_tunnel(new_server_guid, new_tunnel_listener_guid);
 
             g_task_manager.enqueue<host_recv_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
-            g_task_manager.enqueue<client_con_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
+            g_task_manager.enqueue<host_client_con_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
         }
         catch (const std::exception& e)
         {

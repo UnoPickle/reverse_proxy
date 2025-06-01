@@ -20,5 +20,4 @@ private:
 
     tunnel_manager& m_tunnel_manager;
     tunnel_guid m_tunnel_guid;
-    tunnel& m_tunnel;
 };
