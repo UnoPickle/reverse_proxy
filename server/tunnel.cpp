@@ -42,6 +42,12 @@ buffer tunnel::recv_from(const guid& client, const size_t max_len)
     return m_socket_manager.recv(client, max_len);
 }
 
+void tunnel::delete_client(const guid& client)
+{
+    std::unique_lock lock(m_clients_mutex);
+    std::ranges::remove(m_clients, client);
+}
+
 guid tunnel::host() const
 {
     return m_host;

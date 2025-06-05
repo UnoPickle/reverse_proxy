@@ -18,6 +18,8 @@ void host_client_con_task::complete()
         const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
 
         guid new_client_guid = tunnel->accept_client();
+
+        // add new client recv task
     }catch (const winsock_nonblock_exception& e)
     {
 

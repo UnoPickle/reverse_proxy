@@ -14,7 +14,7 @@
 class host_recv_task : public isocket_task
 {
 public:
-    host_recv_task(socket_manager& socket_manager, tunnel_manager& tunnel_manager, const guid& tunnel_guid);
+    host_recv_task(socket_manager& socket_manager, tunnel_manager& tunnel_manager, const tunnel_guid& tunnel_guid);
     ~host_recv_task() override = default;
 
     void complete() override;

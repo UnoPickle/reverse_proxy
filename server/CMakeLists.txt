@@ -55,6 +55,8 @@ add_executable(server main.cpp
         packets/tunnel_info_response_packet.h
         packets/communication_packet.cpp
         packets/communication_packet.h
+        tasks/client_recv_task.cpp
+        tasks/client_recv_task.h
 )
 
 target_link_libraries(server PRIVATE ws2_32.lib)

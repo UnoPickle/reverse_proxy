@@ -14,6 +14,8 @@ public:
     void send_to(const guid& client, const buffer& buffer);
     buffer recv_from(const guid& client, size_t max_len);
 
+    void delete_client(const guid& client);
+
     [[nodiscard]] guid host() const;
     [[nodiscard]] guid listener() const;
     [[nodiscard]] const std::vector<guid>& clients() const;
