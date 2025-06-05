@@ -1,5 +1,7 @@
 #include "host_client_con_task.h"
 
+#include <iostream>
+
 #include "../exceptions/tunnel_manager_exception.h"
 #include "../exceptions/winsock_nonblock_exception.h"
 

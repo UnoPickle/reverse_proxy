@@ -16,13 +16,13 @@ guid tunnel::accept_client()
 {
     guid guid = m_socket_manager.accept(m_listener);
 
-    std::unique_lock lock(*m_clients_mutex);
+    std::unique_lock lock(m_clients_mutex);
     m_clients.push_back(guid);
 
     return guid;
 }
 
-void tunnel::send_to(const guid& client, const buffer& buffer) const
+void tunnel::send_to(const guid& client, const buffer& buffer)
 {
     if (!client_in_tunnel(client))
     {
@@ -32,7 +32,7 @@ void tunnel::send_to(const guid& client, const buffer& buffer) const
     m_socket_manager.send(client, buffer);
 }
 
-buffer tunnel::recv_from(const guid& client, const size_t max_len) const
+buffer tunnel::recv_from(const guid& client, const size_t max_len)
 {
     if (!client_in_tunnel(client))
     {
@@ -57,8 +57,8 @@ const std::vector<guid>& tunnel::clients() const
     return m_clients;
 }
 
-bool tunnel::client_in_tunnel(const guid& client) const
+bool tunnel::client_in_tunnel(const guid& client)
 {
-    std::unique_lock lock(*m_clients_mutex);
+    std::unique_lock lock(m_clients_mutex);
     return std::ranges::find(m_clients, client) == m_clients.end();
 }

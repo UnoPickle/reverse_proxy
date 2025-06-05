@@ -22,6 +22,7 @@ buffer client_connection_packet::serialize() const
     client_connection_packet_struct packet {};
 
     packet.header.type = m_type;
+    packet.header.length = packet_size();
     memcpy(&packet.client_guid, m_client_guid.guid_ptr(), sizeof(GUID));
 
     // Addition is calculated based on the type of the pointer so +1
