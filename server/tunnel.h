@@ -14,7 +14,6 @@ public:
     void send_to(const guid& client, const buffer& buffer);
     buffer recv_from(const guid& client, size_t max_len);
 
-    void clear_clients();
     void delete_client(const guid& client);
 
     [[nodiscard]] guid host() const;

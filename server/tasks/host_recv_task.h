@@ -40,7 +40,6 @@ private:
     void handle_tunnel_info() const;
     void handle_communication(const communication_packet& data) const;
     void handle_client_disconnect(const client_disconnect_packet& data) const;
-    void handle_server_disconnect();
 
     void handle_unknown_packet();
 

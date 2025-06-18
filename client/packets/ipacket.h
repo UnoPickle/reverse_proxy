@@ -8,7 +8,6 @@ enum class reverse_proxy_packet_type : uint8_t
     TUNNEL_INFO_RESPONSE,
     CLIENT_CONNECTION,
     CLIENT_DISCONNECT,
-    SERVER_DISCONNECT,
     COMMUNICATION,
 };
 
