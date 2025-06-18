@@ -16,6 +16,7 @@ public:
     [[nodiscard]] size_t packet_size() const override;
     [[nodiscard]] buffer serialize() const override;
     static communication_packet deserialize(const buffer& packet);
+    static communication_packet deserialize_headerless(const buffer& packet);
 
     [[nodiscard]] guid client_guid() const;
     [[nodiscard]] buffer payload_packet() const;

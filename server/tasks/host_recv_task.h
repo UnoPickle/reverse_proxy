@@ -1,5 +1,6 @@
 #pragma once
 #include "isocket_task.h"
+#include "recv_size_packet_task.h"
 #include "../tunnel.h"
 #include "../tunnel_manager.h"
 #include "../packets/ipacket.h"
@@ -26,6 +27,10 @@ private:
     void handle_tunnel_info() const;
     void handle_communication(const communication_packet& data) const;
 
+    bool m_receiving_data = false;
+    reverse_proxy_packet_type m_processing_packet_type;
+
+    std::shared_ptr<recv_size_packet_task> m_recv_task = nullptr;
     tunnel_manager& m_tunnel_manager;
     tunnel_guid m_tunnel_guid;
 };

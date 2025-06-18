@@ -1,5 +1,9 @@
 #include "host_recv_task.h"
 
+#include <iostream>
+
+#include "recv_size_packet_task.h"
+#include "../task_manager.h"
 #include "../exceptions/socket_manager_exception.h"
 #include "../exceptions/tunnel_exception.h"
 #include "../packets/error_response_packet.h"
@@ -17,34 +21,49 @@ void host_recv_task::complete()
     {
         const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
 
-        buffer buf = m_socket_manager.recv(tunnel->host(), sizeof(reverse_proxy_packet_header));
-        reverse_proxy_packet_header header;
-
-        memcpy(&header, buf.data(), sizeof(reverse_proxy_packet_header));
-
-
-        buffer data;
-
-        if (header.length > 0)
+        if (m_recv_task == nullptr)
         {
-            data = m_socket_manager.recv(tunnel->host(), header.length);
+            m_recv_task = std::make_shared<recv_size_packet_task>(m_socket_manager, tunnel->host(),
+                                                                  sizeof(reverse_proxy_packet_header));
+
+            g_task_manager.enqueue(m_recv_task);
+            return;
         }
 
-        handle_packet(header.type, data);
+        if (m_recv_task->repeat() == true)
+        {
+            return;
+        }
+
+        buffer received_packet = m_recv_task->get_data();
+
+        if (!m_receiving_data)
+        {
+            reverse_proxy_packet_header header;
+
+            memcpy(&header, received_packet.data(), sizeof(reverse_proxy_packet_header));
+
+            m_receiving_data = true;
+            m_processing_packet_type = header.type;
+
+            size_t data_length = header.length;
+            m_recv_task = std::make_shared<recv_size_packet_task>(m_socket_manager, tunnel->host(), data_length);
+
+            g_task_manager.enqueue(m_recv_task);
+            return;
+        }
+
+        m_receiving_data = false;
+        m_recv_task = nullptr;
+
+        handle_packet(m_processing_packet_type, received_packet);
     }
     catch (const winsock_nonblock_exception& e)
     {
         return;
     }catch (const winsock_exception& e)
     {
-        try
-        {
-            m_tunnel_manager.close_tunnel(m_tunnel_guid);
-
-        }catch (const socket_manager_exception& sock_manager_e)
-        {
-            return;
-        }
+        m_tunnel_manager.close_tunnel(m_tunnel_guid);
         return;
     }catch (const socket_manager_exception& e)
     {
@@ -57,7 +76,8 @@ bool host_recv_task::repeat()
     try
     {
         const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
-        return m_socket_manager.socket_exists(tunnel->host());
+        bool host_exists = m_socket_manager.socket_exists(tunnel->host());
+        return host_exists;
     }
     catch (const std::exception& e)
     {
@@ -77,7 +97,9 @@ void host_recv_task::handle_packet(const reverse_proxy_packet_type packet_type, 
         return;
         break;*/
     case reverse_proxy_packet_type::COMMUNICATION:
-        handle_communication(communication_packet::deserialize(data));
+        {
+            handle_communication(communication_packet::deserialize_headerless(data));
+        }
         break;
     default: ;
     }

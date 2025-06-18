@@ -59,6 +59,10 @@ add_executable(server main.cpp
         tasks/client_recv_task.h
         packets/error_response_packet.cpp
         packets/error_response_packet.h
+        packets/client_disconnect_packet.cpp
+        packets/client_disconnect_packet.h
+        tasks/recv_size_packet_task.cpp
+        tasks/recv_size_packet_task.h
 )
 
 target_link_libraries(server PRIVATE ws2_32.lib)

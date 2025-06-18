@@ -2,6 +2,7 @@
 
 #include <mutex>
 
+#include "exceptions/socket_manager_exception.h"
 #include "exceptions/tunnel_manager_exception.h"
 
 tunnel_manager::tunnel_manager(socket_manager& socket_manager) : m_socket_manager(socket_manager)
@@ -43,13 +44,25 @@ void tunnel_manager::close_tunnel(const tunnel_guid& tunnel_guid)
 
     const std::shared_ptr<tunnel> tunnel = it->second;
 
-    m_socket_manager.close_socket(tunnel->host());
-    m_socket_manager.close_socket(tunnel->listener());
+
+    if (m_socket_manager.socket_exists(tunnel->host()))
+    {
+        m_socket_manager.close_socket(tunnel->host());
+    }
+
+    if (m_socket_manager.socket_exists(tunnel->listener()))
+    {
+        m_socket_manager.close_socket(tunnel->listener());
+    }
 
     for (guid client_guid : tunnel->clients())
     {
-        m_socket_manager.close_socket(client_guid);
+        if (m_socket_manager.socket_exists(client_guid))
+        {
+            m_socket_manager.close_socket(client_guid);
+        }
     }
+
 
     m_tunnels.erase(it);
 }

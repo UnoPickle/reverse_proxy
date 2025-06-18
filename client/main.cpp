@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <format>
 #include <iostream>
 
 #include "network_init.h"
@@ -26,6 +27,18 @@ struct tunnel_info_response_packet
     uint16_t tunnel_port;
 } __attribute__((packed));
 
+struct communication_packet_header_struct
+{
+    reverse_proxy_packet_header header;
+    GUID client;
+} __attribute__((packed));
+
+struct client_connection_packet_struct
+{
+    reverse_proxy_packet_header header;
+    GUID client_guid;
+} __attribute__((packed));
+
 int main()
 {
     try
@@ -47,6 +60,26 @@ int main()
         recv(test_socket, reinterpret_cast<char*>(&tunnel_info_buffer), sizeof(tunnel_info_buffer), 0);
 
         std::cout << ntohs(tunnel_info_buffer.tunnel_port) << std::endl;
+
+
+        client_connection_packet_struct client_connection_packet {};
+        recv(test_socket, reinterpret_cast<char*>(&client_connection_packet), sizeof(client_connection_packet), 0);
+
+        std::cout << "Recieved new client!" << std::endl;
+
+
+        communication_packet_header_struct communication_packet_header {};
+        recv(test_socket, reinterpret_cast<char*>(&communication_packet_header.header), sizeof(reverse_proxy_packet_header), 0);
+        recv(test_socket, reinterpret_cast<char*>(&communication_packet_header.client), sizeof(communication_packet_header.client), 0);
+
+        size_t buffer_len = communication_packet_header.header.length - sizeof(communication_packet_header.client);
+        char* buffer = new char[buffer_len];
+        recv(test_socket, buffer, buffer_len, 0);
+
+        std::cout << std::format("received (len {}): {}", std::to_string(buffer_len), buffer) << std::endl;
+
+        send(test_socket, reinterpret_cast<char*>(&communication_packet_header), sizeof(communication_packet_header), 0);
+        send(test_socket, buffer, buffer_len, 0);
 
         system("pause");
 
