@@ -2,6 +2,7 @@
 
 #include "communication_packet.h"
 
+#include <cstring>
 #include <memory>
 
 communication_packet::communication_packet(const guid& client, const buffer& packet) : ipacket(reverse_proxy_packet_type::COMMUNICATION), m_client_guid(client), m_packet(packet)
@@ -10,37 +11,38 @@ communication_packet::communication_packet(const guid& client, const buffer& pac
 
 size_t communication_packet::packet_size() const
 {
-    return sizeof(communication_packet) + m_packet.size();
+    return sizeof(communication_packet_header_struct) - sizeof(reverse_proxy_packet_header) + m_packet.size();
 }
 
 buffer communication_packet::serialize() const
 {
-    std::unique_ptr<uint8_t> packet_buffer = std::make_unique<uint8_t>(packet_size());
+    std::unique_ptr<uint8_t[]> packet_buffer = std::make_unique<uint8_t[]>(sizeof(reverse_proxy_packet_header) + packet_size());
 
-    communication_packet_header_struct header;
+
+    communication_packet_header_struct header {};
 
     header.header.type = m_type;
     header.header.length = packet_size();
     memcpy(&header.client, m_client_guid.guid_ptr(), sizeof(GUID));
 
 
-    memcpy(packet_buffer.get(), &header, sizeof(header));
+    std::memcpy(packet_buffer.get(), (uint8_t*)&header, sizeof(communication_packet_header_struct));
     memcpy(packet_buffer.get() + sizeof(header), m_packet.data(), m_packet.size());
 
-    buffer buffer(packet_buffer.get(), packet_buffer.get() + packet_size());
+    buffer buffer(packet_buffer.get(), packet_buffer.get() + sizeof(reverse_proxy_packet_header) + packet_size());
     return buffer;
 }
 
 communication_packet communication_packet::deserialize(const buffer& packet)
 {
-    communication_packet_header_struct header;
+    communication_packet_header_struct header {};
     memcpy((uint8_t*)&header, packet.data(), sizeof(communication_packet_header_struct));
 
     size_t packet_size = packet.size() - sizeof(communication_packet_header_struct);
 
     buffer payload_packet(packet.data() + sizeof(communication_packet_header_struct), packet.data() + packet_size);
 
-    return communication_packet(guid(header.client), payload_packet);
+    return {guid(header.client), payload_packet};
 }
 
 guid communication_packet::client_guid() const

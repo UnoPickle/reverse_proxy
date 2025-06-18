@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "client_recv_task.h"
+#include "../task_manager.h"
 #include "../exceptions/tunnel_manager_exception.h"
 #include "../exceptions/winsock_nonblock_exception.h"
 
@@ -19,7 +21,7 @@ void host_client_con_task::complete()
 
         guid new_client_guid = tunnel->accept_client();
 
-        // add new client recv task
+        g_task_manager.enqueue<client_recv_task>(m_socket_manager, m_tunnel_manager, m_tunnel_guid, new_client_guid);
     }catch (const winsock_nonblock_exception& e)
     {
 

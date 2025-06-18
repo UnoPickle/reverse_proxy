@@ -66,5 +66,5 @@ const std::vector<guid>& tunnel::clients() const
 bool tunnel::client_in_tunnel(const guid& client)
 {
     std::unique_lock lock(m_clients_mutex);
-    return std::ranges::find(m_clients, client) == m_clients.end();
+    return std::ranges::find(m_clients, client) != m_clients.end();
 }

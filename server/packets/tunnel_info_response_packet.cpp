@@ -8,7 +8,7 @@ tunnel_info_response_packet::tunnel_info_response_packet(const uint16_t tunnel_p
 
 size_t tunnel_info_response_packet::packet_size() const
 {
-    return sizeof(tunnel_info_respone_packet_struct);
+    return sizeof(tunnel_info_respone_packet_struct) - sizeof(reverse_proxy_packet_header);
 }
 
 buffer tunnel_info_response_packet::serialize() const

@@ -14,7 +14,7 @@ guid client_connection_packet::client_guid() const
 
 size_t client_connection_packet::packet_size() const
 {
-    return sizeof(client_connection_packet_struct);
+    return sizeof(client_connection_packet_struct) - sizeof(reverse_proxy_packet_header);
 }
 
 buffer client_connection_packet::serialize() const

@@ -18,6 +18,7 @@ server::server() : m_tunnel_manager(m_socket_manager)
 
 server::~server()
 {
+    g_task_manager.force_stop();
     stop_config_listener_thread();
 }
 
@@ -42,7 +43,10 @@ void server::stop_config_listener_thread()
 
     m_config_listener_running = false;
 
-    m_config_listener_thread->detach();
+    if (m_config_listener_thread->joinable())
+    {
+        m_config_listener_thread->join();
+    }
 }
 
 void server::config_listener_thread_func()
@@ -66,6 +70,12 @@ void server::config_listener_thread_func()
 
             g_task_manager.enqueue<host_recv_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
             g_task_manager.enqueue<host_client_con_task>(m_socket_manager, m_tunnel_manager, new_tunnel_guid);
+        }catch (const winsock_nonblock_exception& e)
+        {
+
+        }catch (const winsock_exception& e)
+        {
+            m_config_listener_running = false;
         }
         catch (const std::exception& e)
         {
@@ -82,6 +92,8 @@ SOCKET server::create_config_listener()
     {
         throw winsock_exception("failed to create config listener socket");
     }
+
+    socket_utils::apply_socket_flags(listener_socket);
 
     sockaddr_in server_address = {};
     server_address.sin_family = AF_INET;

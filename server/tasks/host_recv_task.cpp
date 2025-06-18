@@ -1,5 +1,6 @@
 #include "host_recv_task.h"
 
+#include "../exceptions/socket_manager_exception.h"
 #include "../exceptions/tunnel_exception.h"
 
 
@@ -35,7 +36,17 @@ void host_recv_task::complete()
         return;
     }catch (const winsock_exception& e)
     {
-        m_tunnel_manager.close_tunnel(m_tunnel_guid);
+        try
+        {
+            m_tunnel_manager.close_tunnel(m_tunnel_guid);
+
+        }catch (const socket_manager_exception& sock_manager_e)
+        {
+            return;
+        }
+        return;
+    }catch (const socket_manager_exception& e)
+    {
         return;
     }
 }

@@ -1,5 +1,6 @@
 #include "socket_manager.h"
 
+#include <iostream>
 #include <memory>
 #include <mutex>
 #include <ranges>
@@ -11,6 +12,8 @@
 
 socket_manager::~socket_manager()
 {
+    std::unique_lock lock(m_sockets_mutex);
+
     for (auto soc : m_sockets | std::views::values)
     {
         ::closesocket(soc);
@@ -30,20 +33,27 @@ buffer socket_manager::recv(const guid& socket_guid, const size_t max_read_size)
 
     const std::unique_ptr<uint8_t[]> temp_buffer = std::make_unique<uint8_t[]>(max_read_size);
 
-    if (::recv(socket, (char*)temp_buffer.get(), max_read_size, 0) != SOCKET_ERROR)
+    if (int read_size = ::recv(socket, (char*)temp_buffer.get(), max_read_size, 0); read_size != SOCKET_ERROR)
     {
-        return std::vector(temp_buffer.get(), temp_buffer.get() + max_read_size);
+        if (read_size == 0)
+        {
+            close_socket(socket_guid);
+            throw winsock_exception("couldn't read from socket");
+        }
+
+        return std::vector(temp_buffer.get(), temp_buffer.get() + read_size);
     }
 
     int last_error = WSAGetLastError();
 
     if (last_error == WSAEWOULDBLOCK)
     {
-        throw winsock_nonblock_exception("no clients queued");
+        throw winsock_nonblock_exception("no data queued");
     }
     else
     {
-        throw winsock_exception("couldn't accept socket");
+        close_socket(socket_guid);
+        throw winsock_exception("couldn't read from socket");
     }
 }
 
@@ -65,6 +75,7 @@ guid socket_manager::accept(const guid& listener_guid)
     }
     else
     {
+        close_socket(listener_guid);
         throw winsock_exception("couldn't accept socket");
     }
 }

@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "../exceptions/socket_manager_exception.h"
 #include "../exceptions/tunnel_exception.h"
 #include "../exceptions/winsock_exception.h"
 #include "../exceptions/winsock_nonblock_exception.h"
@@ -37,7 +38,6 @@ void client_recv_task::complete()
             try
             {
                 tunnel->delete_client(m_client_guid);
-                m_socket_manager.close_socket(m_client_guid);
             }catch (const std::exception& client_removal_exception)
             {
 
@@ -45,7 +45,10 @@ void client_recv_task::complete()
         }
     }catch (const tunnel_exception& e)
     {
-        m_socket_manager.close_socket(m_client_guid);
+
+    }catch (const socket_manager_exception& e)
+    {
+
     }
 
 }
@@ -55,7 +58,7 @@ bool client_recv_task::repeat()
     try
     {
         const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
-        return m_socket_manager.socket_exists(tunnel->host());
+        return m_socket_manager.socket_exists(m_client_guid) && m_socket_manager.socket_exists(tunnel->host());
     }
     catch (const std::exception& e)
     {
