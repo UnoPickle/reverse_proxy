@@ -166,10 +166,17 @@ void client::handle_packet(const reverse_proxy_packet_type type, const buffer& d
 
 void client::handle_client_connection_packet(const client_connection_packet& packet)
 {
-    m_connections_manager.create_connection(packet.client_guid(), m_host_port);
+    try
+    {
+        m_connections_manager.create_connection(packet.client_guid(), m_host_port);
 
-    g_task_manager.enqueue(
-        std::make_shared<local_socket_recv_task>(m_connections_manager, m_proxy_socket, packet.client_guid()));
+        g_task_manager.enqueue(
+            std::make_shared<local_socket_recv_task>(m_connections_manager, m_proxy_socket, packet.client_guid()));
+    }catch (const winsock_exception& e)
+    {
+        client_disconnect_packet client_disconnect_packet(packet.client_guid());
+        socket_utils::send(m_proxy_socket, client_disconnect_packet.serialize());
+    }
 }
 
 void client::handle_client_disconnect_packet(const client_disconnect_packet& packet)

@@ -8,9 +8,9 @@ enum class reverse_proxy_packet_type : uint8_t
     TUNNEL_INFO_RESPONSE,
     CLIENT_CONNECTION,
     CLIENT_DISCONNECT,
+    SERVER_DISCONNECT,
     COMMUNICATION,
 };
-
 struct reverse_proxy_packet_header
 {
     reverse_proxy_packet_type type;

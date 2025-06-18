@@ -6,7 +6,7 @@ struct client_disconnect_packet_struct
 {
     reverse_proxy_packet_header header;
     GUID client_guid;
-};
+} __attribute__((packed));
 
 class client_disconnect_packet : public ipacket
 {

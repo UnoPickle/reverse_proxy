@@ -28,33 +28,37 @@ SOCKET connections_manager::create_connection(const guid& client_guid, const uin
     {
         if (int error = WSAGetLastError(); error == WSAEWOULDBLOCK || error == WSAEINPROGRESS)
         {
-            int so_error = 1;
-            int optlen = sizeof(so_error);
-            while (getsockopt(local_socket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &optlen) == SOCKET_ERROR)
-            {
-                if (int opt_error = WSAGetLastError(); opt_error == WSAEWOULDBLOCK || opt_error == WSAEINPROGRESS)
-                {
-                    continue;
-                }
-                else
-                {
-                    break;
-                }
-            }
+            fd_set writefds;
+            FD_ZERO(&writefds);
+            FD_SET(local_socket, &writefds);
 
-            if (so_error != 0)
+            TIMEVAL timeout;
+            timeout.tv_sec = 5; // Wait up to 5 seconds
+            timeout.tv_usec = 0;
+
+            int sel_result = select(0, NULL, &writefds, NULL, &timeout);
+            if (sel_result > 0 && FD_ISSET(local_socket, &writefds))
+            {
+                int so_error = 0;
+                int optlen = sizeof(so_error);
+                getsockopt(local_socket, SOL_SOCKET, SO_ERROR, (char*)&so_error, &optlen);
+                if (so_error != 0)
+                {
+                    closesocket(local_socket);
+                    throw winsock_exception(std::format("couldn't connect local socket to port {}", host_port));
+                }
+                // Connected successfully!
+            }
+            else
             {
                 closesocket(local_socket);
-
-                throw winsock_exception(std::format("couldn't connect local socket to port {}",
-                                                    std::to_string(host_port)));
+                throw winsock_exception(std::format("timeout or error connecting to port {}", host_port));
             }
         }
         else
         {
             closesocket(local_socket);
-
-            throw winsock_exception(std::format("couldn't connect local socket to port {}", std::to_string(host_port)));
+            throw winsock_exception(std::format("couldn't connect local socket to port {}", host_port));
         }
     }
 

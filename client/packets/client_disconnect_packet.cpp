@@ -12,7 +12,7 @@ guid client_disconnect_packet::get_client_guid() const
 
 size_t client_disconnect_packet::packet_size() const
 {
-    return sizeof(client_disconnect_packet);
+    return sizeof(client_disconnect_packet_struct);
 }
 
 buffer client_disconnect_packet::serialize() const

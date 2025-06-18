@@ -98,6 +98,11 @@ void host_recv_task::handle_packet(const reverse_proxy_packet_type packet_type, 
             handle_client_disconnect(client_disconnect_packet::deserialize_headerless(data));
         }
         break;
+    case reverse_proxy_packet_type::SERVER_DISCONNECT:
+        {
+            handle_server_disconnect();
+        }
+        break;
     default:
         handle_unknown_packet();;
     }
@@ -132,7 +137,7 @@ void host_recv_task::handle_communication(const communication_packet& data) cons
     }
 }
 
-void host_recv_task::handle_client_disconnect(const client_disconnect_packet& data)
+void host_recv_task::handle_client_disconnect(const client_disconnect_packet& data) const
 {
     try
     {
@@ -140,6 +145,23 @@ void host_recv_task::handle_client_disconnect(const client_disconnect_packet& da
 
        tunnel->delete_client(data.client_guid());
         m_socket_manager.close_socket(data.client_guid());
+    }catch (const tunnel_manager_exception& e)
+    {
+    }
+}
+
+void host_recv_task::handle_server_disconnect()
+{
+    try
+    {
+        const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
+
+        for (guid client : tunnel->clients())
+        {
+            m_socket_manager.close_socket(client);
+        }
+
+        tunnel->clear_clients();
     }catch (const tunnel_manager_exception& e)
     {
     }

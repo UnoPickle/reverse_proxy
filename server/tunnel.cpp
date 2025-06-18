@@ -42,10 +42,23 @@ buffer tunnel::recv_from(const guid& client, const size_t max_len)
     return m_socket_manager.recv(client, max_len);
 }
 
+void tunnel::clear_clients()
+{
+    std::unique_lock lock(m_clients_mutex);
+    m_clients.clear();
+}
+
 void tunnel::delete_client(const guid& client)
 {
     std::unique_lock lock(m_clients_mutex);
-    std::ranges::remove(m_clients, client);
+
+    auto it = std::find(m_clients.begin(), m_clients.end(), client);
+    if (it == m_clients.end())
+    {
+        throw tunnel_exception("client not found in tunnel");
+    }
+
+    m_clients.erase(it);
 }
 
 guid tunnel::host() const
