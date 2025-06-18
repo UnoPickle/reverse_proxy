@@ -17,9 +17,13 @@ struct error_response_packet_struct
 class error_response_packet : public ipacket{
 public:
     error_response_packet(const error_message_type& type);
+    ~error_response_packet() override = default;
+
+    error_message_type get_error_type() const;
+
     [[nodiscard]] size_t packet_size() const override;
     [[nodiscard]] buffer serialize() const override;
-    ~error_response_packet() override = default;
+    static error_response_packet deserialize_headerless(const buffer& buffer);
 
 private:
     error_message_type m_error_type;

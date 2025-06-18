@@ -40,6 +40,13 @@ add_executable(client main.cpp
         guid.cpp
         exceptions/guid_creation_exception.cpp
         exceptions/guid_creation_exception.h
-        packets/tunnel_info_response_packet.cpp)
+        packets/tunnel_info_response_packet.cpp
+        tasks/local_socket_recv_task.cpp
+        tasks/local_socket_recv_task.h
+        exceptions/error_response_exception.cpp
+        exceptions/error_response_exception.h
+        task_manager.h
+        task_manager.cpp
+)
 
 target_link_libraries(client PRIVATE ws2_32.lib)

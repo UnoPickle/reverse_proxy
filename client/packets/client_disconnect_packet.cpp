@@ -6,6 +6,11 @@ client_disconnect_packet::client_disconnect_packet(const guid& client_guid) : ip
 {
 }
 
+guid client_disconnect_packet::get_client_guid() const
+{
+    return m_client_guid;
+}
+
 size_t client_disconnect_packet::packet_size() const
 {
     return sizeof(client_disconnect_packet);
@@ -21,4 +26,12 @@ buffer client_disconnect_packet::serialize() const
 
     buffer buffer((uint8_t*)&packet, (uint8_t*)(&packet + 1));
     return buffer;
+}
+
+client_disconnect_packet client_disconnect_packet::deserialize_headerless(const buffer& buffer)
+{
+    client_disconnect_packet_struct packet{};
+    memcpy(((uint8_t*)&packet) + sizeof(reverse_proxy_packet_header), buffer.data(), buffer.size());
+
+    return client_disconnect_packet(guid(packet.client_guid));
 }

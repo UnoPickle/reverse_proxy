@@ -33,7 +33,7 @@ buffer socket_manager::recv(const guid& socket_guid, const size_t max_read_size)
 
     const std::unique_ptr<uint8_t[]> temp_buffer = std::make_unique<uint8_t[]>(max_read_size);
 
-    if (int read_size = ::recv(socket, reinterpret_cast<char*>(temp_buffer.get()), max_read_size, 0); read_size != SOCKET_ERROR)
+    if (const int read_size = ::recv(socket, reinterpret_cast<char*>(temp_buffer.get()), max_read_size, 0); read_size != SOCKET_ERROR)
     {
         if (read_size == 0)
         {
@@ -44,9 +44,7 @@ buffer socket_manager::recv(const guid& socket_guid, const size_t max_read_size)
         return buffer(temp_buffer.get(), temp_buffer.get() + read_size);
     }
 
-    int last_error = WSAGetLastError();
-
-    if (last_error == WSAEWOULDBLOCK)
+    if (const int last_error = WSAGetLastError(); last_error == WSAEWOULDBLOCK)
     {
         throw winsock_nonblock_exception("no data queued");
     }

@@ -27,7 +27,7 @@ void client_recv_task::complete()
 
         try
         {
-            const buffer client_packet = tunnel->recv_from(m_client_guid, sizeof(CLIENT_RECV_BUFFER_SIZE));
+            const buffer client_packet = tunnel->recv_from(m_client_guid, CLIENT_RECV_BUFFER_SIZE);
             const communication_packet wrapper_packet(m_client_guid, client_packet);
 
             m_socket_manager.send(tunnel->host(), wrapper_packet.serialize());

@@ -9,6 +9,9 @@
 #include "connections_manager.h"
 
 #include "exceptions/winsock_exception.h"
+#include "packets/client_connection_packet.h"
+#include "packets/client_disconnect_packet.h"
+#include "packets/error_response_packet.h"
 #include "packets/ipacket.h"
 
 namespace std
@@ -32,6 +35,10 @@ private:
 
     void proxy_socket_thread_routine();
     void handle_packet(const reverse_proxy_packet_type type, const buffer& data);
+
+    void handle_client_connection_packet(const client_connection_packet& packet);
+    void handle_client_disconnect_packet(const client_disconnect_packet& packet);
+    void handle_error_response_packet(const error_response_packet& packet);
 
     uint16_t m_host_port;
 

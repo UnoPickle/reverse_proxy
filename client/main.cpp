@@ -12,7 +12,7 @@ int main()
     {
         network_init network;
 
-        client client("127.0.0.1", config::config_port, 80);
+        client client("127.0.0.1", config::config_port, 1234);
         std::cout << std::format("Tunnel port: {}", std::to_string(client.get_tunnel_port())) << std::endl;
 
         system("pause");
