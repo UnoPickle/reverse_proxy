@@ -9,6 +9,7 @@
 #include "connections_manager.h"
 
 #include "exceptions/winsock_exception.h"
+#include "packets/ipacket.h"
 
 namespace std
 {
@@ -21,6 +22,7 @@ public:
     client(const std::string& proxy_address, const uint16_t proxy_port, const uint16_t host_port);
     ~client();
 
+    uint16_t get_tunnel_port() const;
 private:
     SOCKET create_proxy_socket(const std::string& proxy_address, const uint16_t proxy_port);
     void start_proxy_socket_thread();
@@ -29,6 +31,7 @@ private:
     void get_tunnel_info();
 
     void proxy_socket_thread_routine();
+    void handle_packet(const reverse_proxy_packet_type type, const buffer& data);
 
     uint16_t m_host_port;
 

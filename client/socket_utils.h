@@ -7,4 +7,5 @@ namespace socket_utils
 {
     int send(SOCKET socket, const buffer& buffer);
     buffer recv(SOCKET socket, const size_t max_read_size);
+    void apply_socket_flags(SOCKET socket);
 }

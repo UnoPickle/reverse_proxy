@@ -5,6 +5,7 @@
 
 #include "socket_utils.h"
 #include "exceptions/tunnel_info_exception.h"
+#include "exceptions/winsock_nonblock_exception.h"
 #include "packets/ipacket.h"
 #include "packets/tunnel_info_request_packet.h"
 #include "packets/tunnel_info_response_packet.h"
@@ -15,14 +16,18 @@ client::client(const std::string& proxy_address, const uint16_t proxy_port, cons
     m_proxy_socket = create_proxy_socket(proxy_address, proxy_port);
     get_tunnel_info();
 
-    std::cout << std::format("Tunnel port: {}", std::to_string(m_tunnel_port)) << std::endl;
-
-    //start_proxy_socket_thread();
+    start_proxy_socket_thread();
 }
 
 client::~client()
 {
     closesocket(m_proxy_socket);
+    stop_proxy_socket_thread();
+}
+
+uint16_t client::get_tunnel_port() const
+{
+    return m_tunnel_port;
 }
 
 SOCKET client::create_proxy_socket(const std::string& proxy_address, const uint16_t proxy_port)
@@ -33,6 +38,7 @@ SOCKET client::create_proxy_socket(const std::string& proxy_address, const uint1
     {
         throw winsock_exception("couldn't create proxy socket");
     }
+
 
     sockaddr_in address;
     address.sin_family = AF_INET;
@@ -104,10 +110,38 @@ void client::proxy_socket_thread_routine()
     {
         try
         {
+            reverse_proxy_packet_header header{};
+            buffer header_buffer = socket_utils::recv(m_proxy_socket, sizeof(header));
+
+            std::memcpy(&header, header_buffer.data(), sizeof(header));
+
+            buffer packet_buffer = socket_utils::recv(m_proxy_socket, header.length);
+
+            handle_packet(header.type, packet_buffer);
         }
         catch (const std::exception& e)
         {
             std::cout << std::format("[ proxy_socket_thread ]: {}", e.what()) << std::endl;
         }
+    }
+}
+
+void client::handle_packet(const reverse_proxy_packet_type type, const buffer& data)
+{
+    switch (type)
+    {
+    case reverse_proxy_packet_type::CLIENT_CONNECTION:
+        {
+            std::cout << "New client connection" << std::endl;
+        }
+        break;
+
+    case reverse_proxy_packet_type::CLIENT_DISCONNECT:
+        {
+            std::cout << "Client disconnected" << std::endl;
+        }
+        break;
+    case reverse_proxy_packet_type::ERROR_RESPONSE:
+        break;
     }
 }

@@ -35,3 +35,10 @@ buffer socket_utils::recv(SOCKET socket, const size_t max_read_size)
         throw winsock_exception("couldn't read from socket");
     }
 }
+
+void socket_utils::apply_socket_flags(SOCKET socket)
+{
+    u_long mode = 1;
+    ioctlsocket(socket, FIONBIO, &mode);
+}
+

@@ -1,10 +1,13 @@
 #include "client_recv_task.h"
 
+#include <iostream>
+
 #include "../exceptions/socket_manager_exception.h"
 #include "../exceptions/tunnel_exception.h"
 #include "../exceptions/tunnel_manager_exception.h"
 #include "../exceptions/winsock_exception.h"
 #include "../exceptions/winsock_nonblock_exception.h"
+#include "../packets/client_disconnect_packet.h"
 #include "../packets/communication_packet.h"
 
 client_recv_task::client_recv_task(socket_manager& socket_manager, tunnel_manager& tunnel_manager,
@@ -35,6 +38,9 @@ void client_recv_task::complete()
         {
             try
             {
+                client_disconnect_packet client_disconnect_packet(m_client_guid);
+                m_socket_manager.send(tunnel->host(), client_disconnect_packet.serialize());
+
                 tunnel->delete_client(m_client_guid);
             }catch (const std::exception& client_removal_exception)
             {
