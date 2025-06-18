@@ -1,15 +1,21 @@
 #pragma once
-#include "isocket_task.h"
-#include "recv_size_packet_task.h"
-#include "../tunnel.h"
-#include "../tunnel_manager.h"
-#include "../packets/ipacket.h"
-
 #include "../socket_utils.h"
 #include "../tunnel.h"
 #include "../exceptions/winsock_exception.h"
 #include "../exceptions/winsock_nonblock_exception.h"
 #include "../packets/tunnel_info_response_packet.h"
+#include "../packets/communication_packet.h"
+#include "recv_size_packet_task.h"
+#include "../task_manager.h"
+#include "../exceptions/socket_manager_exception.h"
+#include "../exceptions/tunnel_exception.h"
+#include "../packets/error_response_packet.h"
+
+#include "isocket_task.h"
+#include "recv_size_packet_task.h"
+#include "../tunnel.h"
+#include "../tunnel_manager.h"
+#include "../packets/ipacket.h"
 #include "../packets/communication_packet.h"
 
 class host_recv_task : public isocket_task

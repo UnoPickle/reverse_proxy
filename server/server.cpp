@@ -6,6 +6,7 @@
 #include "socket_utils.h"
 #include "task_manager.h"
 #include "exceptions/winsock_exception.h"
+#include "exceptions/winsock_nonblock_exception.h"
 #include "tasks/host_client_con_task.h"
 #include "tasks/host_recv_task.h"
 

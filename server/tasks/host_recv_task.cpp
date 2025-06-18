@@ -2,12 +2,6 @@
 
 #include <iostream>
 
-#include "recv_size_packet_task.h"
-#include "../task_manager.h"
-#include "../exceptions/socket_manager_exception.h"
-#include "../exceptions/tunnel_exception.h"
-#include "../packets/error_response_packet.h"
-
 
 host_recv_task::host_recv_task(socket_manager& socket_manager, tunnel_manager& tunnel_manager,
                                const guid& tunnel_guid) : isocket_task(socket_manager),
@@ -112,7 +106,7 @@ void host_recv_task::handle_tunnel_info() const
     const tunnel_info_response_packet packet(
         socket_utils::get_src_port(m_socket_manager.get_socket(tunnel->listener())));
 
-    const buffer serialized_packet = packet.serialize();
+a    const buffer serialized_packet = packet.serialize();
     m_socket_manager.send(tunnel->host(), serialized_packet);
 }
 

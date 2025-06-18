@@ -12,7 +12,7 @@ struct error_response_packet_struct
 {
     reverse_proxy_packet_header header;
     error_message_type error_message_type;
-} __attribute__((packed));
+};
 
 class error_response_packet : public ipacket{
 public:

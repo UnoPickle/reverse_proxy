@@ -51,8 +51,6 @@ add_executable(server main.cpp
         tasks/host_client_con_task.h
         tasks/host_recv_task.cpp
         tasks/host_recv_task.h
-        packets/tunnel_info_response_packet.cpp
-        packets/tunnel_info_response_packet.h
         packets/communication_packet.cpp
         packets/communication_packet.h
         tasks/client_recv_task.cpp
