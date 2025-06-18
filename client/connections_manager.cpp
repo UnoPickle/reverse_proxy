@@ -76,7 +76,8 @@ SOCKET connections_manager::get_socket(const guid& guid)
 
 void connections_manager::close_connection(const guid& guid)
 {
-    if (const SOCKET local_socket = get_socket(guid); closesocket(local_socket) == SOCKET_ERROR)
+    const SOCKET local_socket = get_socket(guid);
+    if (closesocket(local_socket) == SOCKET_ERROR)
     {
         throw winsock_exception("couldn't close local socket");
     }

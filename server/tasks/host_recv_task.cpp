@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "../exceptions/tunnel_manager_exception.h"
+
 
 host_recv_task::host_recv_task(socket_manager& socket_manager, tunnel_manager& tunnel_manager,
                                const guid& tunnel_guid) : isocket_task(socket_manager),
@@ -91,7 +93,13 @@ void host_recv_task::handle_packet(const reverse_proxy_packet_type packet_type, 
             handle_communication(communication_packet::deserialize_headerless(data));
         }
         break;
-    default: ;
+    case reverse_proxy_packet_type::CLIENT_DISCONNECT:
+        {
+            handle_client_disconnect(client_disconnect_packet::deserialize_headerless(data));
+        }
+        break;
+    default:
+        handle_unknown_packet();;
     }
 }
 
@@ -121,5 +129,34 @@ void host_recv_task::handle_communication(const communication_packet& data) cons
     {
         const error_response_packet error(error_message_type::INVALID_GUID);
         m_socket_manager.send(tunnel->host(), error.serialize());
+    }
+}
+
+void host_recv_task::handle_client_disconnect(const client_disconnect_packet& data)
+{
+    try
+    {
+        const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
+
+       tunnel->delete_client(data.client_guid());
+        m_socket_manager.close_socket(data.client_guid());
+    }catch (const tunnel_manager_exception& e)
+    {
+    }
+}
+
+void host_recv_task::handle_unknown_packet()
+{
+    try
+    {
+        const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
+
+        const error_response_packet error(error_message_type::INVALID_PACKET_TYPE);
+        m_socket_manager.send(tunnel->host(), error.serialize());
+    }
+    catch (const socket_manager_exception& e)
+    {
+    }catch (const tunnel_manager_exception& e)
+    {
     }
 }

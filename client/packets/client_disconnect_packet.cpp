@@ -1,8 +1,7 @@
-
-
 #include "client_disconnect_packet.h"
 
-client_disconnect_packet::client_disconnect_packet(const guid& client_guid) : ipacket(reverse_proxy_packet_type::CLIENT_DISCONNECT), m_client_guid(client_guid)
+client_disconnect_packet::client_disconnect_packet(const guid& client_guid) :
+    ipacket(reverse_proxy_packet_type::CLIENT_DISCONNECT), m_client_guid(client_guid)
 {
 }
 
@@ -18,7 +17,7 @@ size_t client_disconnect_packet::packet_size() const
 
 buffer client_disconnect_packet::serialize() const
 {
-    client_disconnect_packet_struct packet {};
+    client_disconnect_packet_struct packet{};
 
     packet.header.type = m_type;
     packet.header.length = packet_size() - sizeof(reverse_proxy_packet_header);
@@ -31,7 +30,7 @@ buffer client_disconnect_packet::serialize() const
 client_disconnect_packet client_disconnect_packet::deserialize_headerless(const buffer& buffer)
 {
     client_disconnect_packet_struct packet{};
-    memcpy(((uint8_t*)&packet) + sizeof(reverse_proxy_packet_header), buffer.data(), buffer.size());
+    memcpy(&packet.client_guid, buffer.data(), buffer.size());
 
     return client_disconnect_packet(guid(packet.client_guid));
 }

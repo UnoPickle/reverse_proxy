@@ -5,7 +5,7 @@
 
 #include "../packets/error_response_packet.h"
 
-const std::map<error_message_type, std::string> error_map = { {error_message_type::INVALID_GUID, "Invalid guid"} };
+const std::map<error_message_type, std::string> error_map = { { error_message_type::INVALID_PACKET_TYPE, "Invalid packet type" }, {error_message_type::INVALID_GUID, "Invalid guid"} };
 
 class error_response_exception : public client_exception
 {

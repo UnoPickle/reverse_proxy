@@ -19,6 +19,7 @@
 
 #include "recv_size_packet_task.h"
 #include "../tunnel.h"
+#include "../packets/client_disconnect_packet.h"
 
 
 #include "../packets/communication_packet.h"
@@ -38,6 +39,9 @@ private:
 
     void handle_tunnel_info() const;
     void handle_communication(const communication_packet& data) const;
+    void handle_client_disconnect(const client_disconnect_packet& const data);
+
+    void handle_unknown_packet();
 
     bool m_receiving_data = false;
     reverse_proxy_packet_type m_processing_packet_type;

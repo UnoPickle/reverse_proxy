@@ -5,7 +5,8 @@
 
 enum class error_message_type : uint8_t
 {
-    INVALID_GUID = 0
+    INVALID_PACKET_TYPE = 0,
+    INVALID_GUID,
 };
 
 struct error_response_packet_struct

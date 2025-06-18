@@ -8,6 +8,7 @@
 #include "exceptions/error_response_exception.h"
 #include "exceptions/tunnel_info_exception.h"
 #include "exceptions/winsock_nonblock_exception.h"
+#include "packets/communication_packet.h"
 #include "packets/ipacket.h"
 #include "packets/tunnel_info_request_packet.h"
 #include "packets/tunnel_info_response_packet.h"
@@ -147,6 +148,13 @@ void client::handle_packet(const reverse_proxy_packet_type type, const buffer& d
             handle_client_disconnect_packet(packet);
         }
         break;
+
+    case reverse_proxy_packet_type::COMMUNICATION:
+        {
+            const communication_packet packet = communication_packet::deserialize_headerless(data);
+            handle_communication_packet(packet);
+        }
+        break;
     case reverse_proxy_packet_type::ERROR_RESPONSE:
         {
             const error_response_packet packet = error_response_packet::deserialize_headerless(data);
@@ -167,6 +175,11 @@ void client::handle_client_connection_packet(const client_connection_packet& pac
 void client::handle_client_disconnect_packet(const client_disconnect_packet& packet)
 {
     m_connections_manager.close_connection(packet.get_client_guid());
+}
+
+void client::handle_communication_packet(const communication_packet& packet)
+{
+    m_connections_manager.send_to(packet.client_guid(), packet.payload_packet());
 }
 
 void client::handle_error_response_packet(const error_response_packet& packet)

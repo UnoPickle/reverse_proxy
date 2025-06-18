@@ -11,6 +11,7 @@
 #include "exceptions/winsock_exception.h"
 #include "packets/client_connection_packet.h"
 #include "packets/client_disconnect_packet.h"
+#include "packets/communication_packet.h"
 #include "packets/error_response_packet.h"
 #include "packets/ipacket.h"
 
@@ -38,6 +39,7 @@ private:
 
     void handle_client_connection_packet(const client_connection_packet& packet);
     void handle_client_disconnect_packet(const client_disconnect_packet& packet);
+    void handle_communication_packet(const communication_packet& packet);
     void handle_error_response_packet(const error_response_packet& packet);
 
     uint16_t m_host_port;
