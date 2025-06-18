@@ -61,6 +61,7 @@ add_executable(server main.cpp
         packets/client_disconnect_packet.h
         tasks/recv_size_packet_task.cpp
         tasks/recv_size_packet_task.h
+        packets/tunnel_info_response_packet.cpp
 )
 
 target_link_libraries(server PRIVATE ws2_32.lib)

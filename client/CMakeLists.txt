@@ -25,6 +25,21 @@ add_executable(client main.cpp
         exceptions/winsock_nonblock_exception.cpp
         exceptions/winsock_nonblock_exception.h
         exceptions/tunnel_info_exception.cpp
-        exceptions/tunnel_info_exception.h)
+        exceptions/tunnel_info_exception.h
+        packets/client_connection_packet.cpp
+        packets/client_connection_packet.h
+        packets/client_disconnect_packet.cpp
+        packets/client_disconnect_packet.h
+        packets/communication_packet.cpp
+        packets/communication_packet.h
+        packets/error_response_packet.cpp
+        packets/error_response_packet.h
+        packets/ipacket.cpp
+        packets/ipacket.h
+        config.cpp
+        guid.cpp
+        exceptions/guid_creation_exception.cpp
+        exceptions/guid_creation_exception.h
+        packets/tunnel_info_response_packet.cpp)
 
 target_link_libraries(client PRIVATE ws2_32.lib)

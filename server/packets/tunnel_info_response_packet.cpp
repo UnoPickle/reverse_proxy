@@ -2,7 +2,7 @@
 
 #include <winsock2.h>
 
-tunnel_info_response_packet::tunnel_info_response_packet(const uint16_t tunnel_port) : ipacket(reverse_proxy_packet_type::TUNNEL_INFO_REQUEST), m_tunnel_port(tunnel_port)
+tunnel_info_response_packet::tunnel_info_response_packet(const uint16_t tunnel_port) : ipacket(reverse_proxy_packet_type::TUNNEL_INFO_RESPONSE), m_tunnel_port(tunnel_port)
 {
 }
 

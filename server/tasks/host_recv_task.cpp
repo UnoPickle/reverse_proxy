@@ -86,10 +86,6 @@ void host_recv_task::handle_packet(const reverse_proxy_packet_type packet_type, 
     case reverse_proxy_packet_type::TUNNEL_INFO_REQUEST:
         handle_tunnel_info();
         break;
-    /*case reverse_proxy_packet_type::SERVER_DISCONNECT:
-        m_tunnel_manager.close_tunnel(m_tunnel_guid);
-        return;
-        break;*/
     case reverse_proxy_packet_type::COMMUNICATION:
         {
             handle_communication(communication_packet::deserialize_headerless(data));
@@ -99,6 +95,7 @@ void host_recv_task::handle_packet(const reverse_proxy_packet_type packet_type, 
     }
 }
 
+
 void host_recv_task::handle_tunnel_info() const
 {
     const std::shared_ptr<tunnel> tunnel = m_tunnel_manager.get_tunnel(m_tunnel_guid);
@@ -106,7 +103,7 @@ void host_recv_task::handle_tunnel_info() const
     const tunnel_info_response_packet packet(
         socket_utils::get_src_port(m_socket_manager.get_socket(tunnel->listener())));
 
-a    const buffer serialized_packet = packet.serialize();
+    const buffer serialized_packet = packet.serialize();
     m_socket_manager.send(tunnel->host(), serialized_packet);
 }
 

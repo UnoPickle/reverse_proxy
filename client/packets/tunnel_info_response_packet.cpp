@@ -34,6 +34,6 @@ tunnel_info_response_packet tunnel_info_response_packet::deserialize_headerless(
     size_t headerless_size = sizeof(tunnel_info_respone_packet_struct) - sizeof(reverse_proxy_packet_header);
     memcpy(((uint8_t*)&packet) + headerless_size, buffer.data(), buffer.size());
 
-    return tunnel_info_response_packet(packet.tunnel_port);
+    return tunnel_info_response_packet(ntohs(packet.tunnel_port));
 }
 

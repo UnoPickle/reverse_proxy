@@ -13,7 +13,7 @@ buffer tunnel_info_request_packet::serialize() const
 {
     tunnel_info_request_packet_struct packet;
     packet.header.type = m_type;
-    packet.header.length = packet_size() - sizeof(reverse_proxy_packet_type);
+    packet.header.length = packet_size() - sizeof(reverse_proxy_packet_header);
 
     buffer buffer((uint8_t*)&packet, (uint8_t*)(&packet + 1));
     return buffer;

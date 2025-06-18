@@ -14,7 +14,7 @@ buffer socket_utils::recv(SOCKET socket, const size_t max_read_size)
 {
     const std::unique_ptr<uint8_t[]> temp_buffer = std::make_unique<uint8_t[]>(max_read_size);
 
-    if (int read_size = ::recv(socket, reinterpret_cast<char*>(temp_buffer.get()), max_read_size, 0); )
+    if (int read_size = ::recv(socket, reinterpret_cast<char*>(temp_buffer.get()), max_read_size, 0); read_size != SOCKET_ERROR)
     {
         if (read_size == 0)
         {
