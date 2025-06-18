@@ -11,25 +11,25 @@ communication_packet::communication_packet(const guid& client, const buffer& pac
 
 size_t communication_packet::packet_size() const
 {
-    return sizeof(communication_packet_header_struct) - sizeof(reverse_proxy_packet_header) + m_packet.size();
+    return sizeof(communication_packet_header_struct) + m_packet.size();
 }
 
 buffer communication_packet::serialize() const
 {
-    std::unique_ptr<uint8_t[]> packet_buffer = std::make_unique<uint8_t[]>(sizeof(reverse_proxy_packet_header) + packet_size());
+    std::unique_ptr<uint8_t[]> packet_buffer = std::make_unique<uint8_t[]>(packet_size());
 
 
     communication_packet_header_struct header {};
 
     header.header.type = m_type;
-    header.header.length = packet_size();
+    header.header.length = packet_size() - sizeof(reverse_proxy_packet_header);
     memcpy(&header.client, m_client_guid.guid_ptr(), sizeof(GUID));
 
 
     std::memcpy(packet_buffer.get(), (uint8_t*)&header, sizeof(communication_packet_header_struct));
     memcpy(packet_buffer.get() + sizeof(header), m_packet.data(), m_packet.size());
 
-    buffer buffer(packet_buffer.get(), packet_buffer.get() + sizeof(reverse_proxy_packet_header) + packet_size());
+    buffer buffer(packet_buffer.get(), packet_buffer.get() + packet_size());
     return buffer;
 }
 

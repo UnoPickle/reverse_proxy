@@ -14,7 +14,7 @@ guid client_connection_packet::client_guid() const
 
 size_t client_connection_packet::packet_size() const
 {
-    return sizeof(client_connection_packet_struct) - sizeof(reverse_proxy_packet_header);
+    return sizeof(client_connection_packet_struct);
 }
 
 buffer client_connection_packet::serialize() const
@@ -22,7 +22,7 @@ buffer client_connection_packet::serialize() const
     client_connection_packet_struct packet {};
 
     packet.header.type = m_type;
-    packet.header.length = packet_size();
+    packet.header.length = packet_size() - sizeof(reverse_proxy_packet_header);
     memcpy(&packet.client_guid, m_client_guid.guid_ptr(), sizeof(GUID));
 
     // Addition is calculated based on the type of the pointer so +1

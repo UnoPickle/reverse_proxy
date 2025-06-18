@@ -2,6 +2,7 @@
 
 #include "../exceptions/socket_manager_exception.h"
 #include "../exceptions/tunnel_exception.h"
+#include "../packets/error_response_packet.h"
 
 
 host_recv_task::host_recv_task(socket_manager& socket_manager, tunnel_manager& tunnel_manager,
@@ -103,5 +104,9 @@ void host_recv_task::handle_communication(const communication_packet& data) cons
     }
     catch (tunnel_exception& e)
     {
+    }catch (const socket_manager_exception& e)
+    {
+        const error_response_packet error(error_message_type::INVALID_GUID);
+        m_socket_manager.send(tunnel->host(), error.serialize());
     }
 }
