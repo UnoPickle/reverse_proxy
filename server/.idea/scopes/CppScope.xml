@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="CppScope" pattern="file:*.cpp||file:*.h||file:*.c||file:*.hpp" />
+</component>
