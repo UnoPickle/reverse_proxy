@@ -12,7 +12,7 @@
 class task_manager
 {
 public:
-    explicit task_manager(const size_t thread_count);
+    void start(const size_t thread_count);
 
     template<typename T, typename ...Args>
     void enqueue(Args&&... args);
