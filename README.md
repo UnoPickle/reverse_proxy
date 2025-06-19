@@ -34,3 +34,4 @@ When the proxy client connects to the proxy server the server opens a port at it
 * Test the client thread count adjustment (fix data race)
 
 ## License
+[GPL-v3.0](https://github.com/UnoPickle/reverse_proxy/blob/main/LICENSE)
